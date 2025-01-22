@@ -70,8 +70,11 @@ def main():
     if st.button("Analyze"):
         if text_input:
             # Analysis
-            sentences, scores = analyze_text(text_input, model)
-            
+            sentences=split_to_sentences(text_input, max_length=MAX_LENGTH)
+            scores=[]
+            for sentence in sentences:
+              score = tell(sentence, model)
+              scores.append(score)
             # Overall spam probability
             max_score = max(scores)
             is_spam = max_score >= 0.3
