@@ -6,7 +6,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import one_hot
 
 # Load the TensorFlow model
-model = tf.keras.models.load_model('/my_model.h5')  # Make sure your model is in the same directory or provide the correct path
+model = tf.keras.models.load_model('models/my_model.h5')  # Make sure your model is in the same directory or provide the correct path
 
 vocab = 5000
 length = 30
