@@ -14,7 +14,7 @@ MAX_LENGTH = 30
 # Load model
 @st.cache_resource
 def load_model():
-    return tf.keras.models.load_model('models/my_model.h5')
+    return tf.keras.models.load_model('models/my_model2.h5')
 
 def split_to_sentences(text, max_length=30):
     # Split the text on specified punctuation marks
