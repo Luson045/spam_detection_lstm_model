@@ -40,7 +40,7 @@ def tell(string, model):
     # Pad sequence
     padded_s = tf.keras.preprocessing.sequence.pad_sequences([ns], padding='pre', maxlen=MAX_LENGTH)
     # Predict
-    pred = model.predict(padded_s, verbose=0)
+    pred = model.predict(padded_s)
     return pred[0][0]
 
 def analyze_text(text, model):
@@ -49,7 +49,7 @@ def analyze_text(text, model):
     
     for sentence in sentences:
         score = tell(sentence, model)
-        scores.append(float(score))
+        scores.append(score)
     
     return sentences, scores
 
