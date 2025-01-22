@@ -93,9 +93,9 @@ def main():
             st.subheader("Statistics")
             col1, col2, col3 = st.columns(3)
             with col1:
-                st.metric("Maximum Spam Score", f"{max_score}")
+                st.metric("Maximum Spam Score", f"{max_score:.2%}")
             with col2:
-                st.metric("Average Spam Score", f"{np.mean(scores)}")
+                st.metric("Average Spam Score", f"{np.mean(scores):.2%}")
             with col3:
                 st.metric("Number of Segments", len(sentences))
             
@@ -134,13 +134,13 @@ def main():
             
             # Detailed segments table
             st.subheader("Detailed Segment Analysis")
-            df['Spam Score'] = df['Spam Score'].apply(lambda x: f"{x}")
+            df['Spam Score'] = df['Spam Score'].apply(lambda x: f"{x}:.2%")
             st.dataframe(df)
             
             # Most suspicious segment
             if is_spam:
                 max_score_idx = scores.index(max_score)
-                st.warning(f"Most suspicious segment: \"{sentences[max_score_idx]}\" (Score: {max_score})")
+                st.warning(f"Most suspicious segment: \"{sentences[max_score_idx]}\" (Score: {max_score}:.2%)")
         else:
             st.warning("Please enter some text to analyze.")
 
