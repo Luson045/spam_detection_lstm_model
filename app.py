@@ -4,9 +4,10 @@ import re
 import textwrap
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import one_hot
+import matplotlib.pyplot as plt
 
 # Load the TensorFlow model
-model = tf.keras.models.load_model('models/my_model.h5')  # Make sure your model is in the same directory or provide the correct path
+model = tf.keras.models.load_model('models/my_model.h5')  # Make sure your model is in the correct directory
 
 vocab = 5000
 length = 30
@@ -38,25 +39,56 @@ def predict(string):
     for i in result:
         t = tell(i)
         answer.append(t)
-    if max(answer) >= 0.3:
-        return "Spam", result[answer.index(max(answer))]
-    else:
-        return "Not Spam", None
+    return result, answer
 
 # Streamlit app layout
-st.title("Text Spam Detection")
-st.write("Enter a news or text to analyze whether it is spam or not:")
+st.set_page_config(page_title="Spam Detection", page_icon="🔍", layout="wide")
+st.title("📬 Text Spam Detection")
+st.write("Enter the news or text below to analyze whether it is spam or not:")
 
-# Text input from the user
-input_text = st.text_area("Enter Text", "Type your text here...")
+# Create an input section with a stylish text area
+input_text = st.text_area("Type the text here", "Type your text to check if it's spam...", height=200)
 
-if st.button("Analyze"):
+# Create a button to trigger the analysis
+analyze_button = st.button("Analyze")
+
+if analyze_button:
     if input_text:
-        st.write("Analyzing the input text...")
-        prediction, spam_word = predict(input_text)
-        st.write(f"Prediction: {prediction}")
-        if spam_word:
-            st.write(f"Spam word: {spam_word}")
+        # Show a loading spinner while analyzing
+        with st.spinner("Analyzing... Please wait."):
+            # Get sentences and their respective spam probabilities
+            sentences, probabilities = predict(input_text)
+
+            # Determine if it's spam or not
+            max_prob = max(probabilities)
+            prediction = "Spam" if max_prob >= 0.3 else "Not Spam"
+
+            # Display the main prediction (spam or not)
+            st.subheader(f"**Prediction:** {prediction}")
+            st.write(f"**Maximum Spam Probability:** {max_prob * 100:.2f}%")
+
+            # Display sentence with the highest probability of being spam
+            if prediction == "Spam":
+                spam_sentence = sentences[probabilities.index(max_prob)]
+                st.write(f"**Spam Sentence:** {spam_sentence}")
+                st.write(f"**Spam Probability:** {max_prob * 100:.2f}%")
+
+            # Display a table of sentences with probabilities
+            st.write("### Sentence Probabilities:")
+            sentence_data = {
+                "Sentence": sentences,
+                "Spam Probability (%)": [prob * 100 for prob in probabilities]
+            }
+            st.dataframe(sentence_data)
+
+            # Display a bar chart with probabilities of each sentence
+            st.write("### Spam Probability Bar Chart:")
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.barh(sentences, [prob * 100 for prob in probabilities], color='tomato')
+            ax.set_xlabel("Spam Probability (%)")
+            ax.set_title("Spam Probability of Each Sentence")
+            ax.set_xlim(0, 100)
+            st.pyplot(fig)
+
     else:
         st.warning("Please enter some text!")
-
