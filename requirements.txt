@@ -2,4 +2,4 @@ streamlit
 tensorflow
 numpy
 textwrap3
-matplotlib
+plotly
